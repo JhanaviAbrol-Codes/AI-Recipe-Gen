@@ -1,8 +1,35 @@
 import streamlit as st
 
 def load_css():
-    with open('styles.css') as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+        .image-carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .carousel-item {
+            flex: 0 0 auto;
+            width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .caption {
+            padding: 0.5rem;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
 def display_food_image_carousel():
     # Create image carousel using pre-fetched stock photos
@@ -18,29 +45,11 @@ def display_food_image_carousel():
         {
             "url": "https://images.unsplash.com/photo-1479832793815-b9be4c77023e",
             "caption": "Prepared Meal"
-        },
-        {
-            "url": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
-            "caption": "Modern Kitchen"
         }
     ]
 
-    # Display images in a horizontal scroll container
-    st.markdown(
-        """
-        <div class="image-carousel">
-            {}
-        </div>
-        """.format(
-            "".join(
-                f"""
-                <div class="carousel-item">
-                    <img src="{img['url']}" alt="{img['caption']}">
-                    <p class="caption">{img['caption']}</p>
-                </div>
-                """
-                for img in images
-            )
-        ),
-        unsafe_allow_html=True
-    )
+    # Use columns for a more native Streamlit layout
+    cols = st.columns(len(images))
+    for idx, (col, img) in enumerate(zip(cols, images)):
+        with col:
+            st.image(img["url"], caption=img["caption"], use_container_width=True)
